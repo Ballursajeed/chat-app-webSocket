@@ -2,8 +2,6 @@ const { createServer } = require('http');
 const express = require("express");
 const path = require("path");
 const os = require("os");
-const cluster = require("cluster");
-
 
 const PORT = 8002;
 
@@ -13,7 +11,7 @@ const { Server } = require("socket.io");
   const server = createServer(app);
   const io = new Server(server);
 
-app.use(express.static(path.resolve("./public")));
+ app.use(express.static(path.resolve("./public")));
 
 app.get("/",(req,res) => {
   return res.sendFile("/public/index.html")
