@@ -1,26 +1,30 @@
-const http = require('http');
+const { createServer } = require('http');
 const express = require("express");
-const path = require("path")
+const path = require("path");
+const os = require("os");
 
-const app = express();
-const server = http.createServer(app);
 const PORT = 8002;
 
-
 const { Server } = require("socket.io");
-const io = new Server(server);
 
-//socket io
- io.on("connection", (socket) => {
-   socket.on("user-message",(message) => {
-      io.emit("message",message);
-   })
- });
+  const app = express();
+  const server = createServer(app);
+  const io = new Server(server);
 
-app.use(express.static(path.resolve("./public")));
+ app.use(express.static(path.resolve("./public")));
 
 app.get("/",(req,res) => {
   return res.sendFile("/public/index.html")
 })
 
+  io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
+
 server.listen(PORT,() => console.log("Server is running on port:",PORT));
+
+
+
+

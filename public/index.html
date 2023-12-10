@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>Chat APP</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Socket.IO chat</title>
 </head>
 <body>
- <h1>Chatting</h1>
- <input type="text" id="message" placeholder="Enter Message" />
- <button id="sendBtn">Send</button>
- <div id="messages"></div>
+ <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
 
+  var messages = document.getElementById('messages');
+  var form = document.getElementById('form');
+  var input = document.getElementById('input');
 
- <script src="/socket.io/socket.io.js"></script>
- <script type="text/javascript">
-   	const socket = io();
-   	const sendBtn = document.getElementById("sendBtn");
-   	const messageInput = document.getElementById("message");
-   	const allMessages = document.getElementById("messages");
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (input.value) {
+      socket.emit('chat message', input.value);
+      input.value = '';
+    }
+  });
 
-      socket.on("message",(message) =>{
-         const p = document.createElement("p");
-         p.innerText = message;
-         allMessages.appendChild(p);
-      });
-
-   	sendBtn.addEventListener("click",(e) => {
-            const message = messageInput.value;
-            socket.emit("user-message",message);
-   	})
- </script>
+  socket.on('chat message', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+</script>
 </body>
 </html>
